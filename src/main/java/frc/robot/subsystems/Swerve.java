@@ -37,11 +37,7 @@ public class Swerve extends SubsystemBase {
   public Field2d field = new Field2d();
   public PIDController anglePidController = new PIDController(0.0015, 0, 0);
 
-  public double setpoint = 0.0;
-  public double strafeVal = RobotContainer.swerve.visionPIDController.calculate(LimelightHelpers.getTY("limelight"),setpoint);
-  public PIDController visionPIDController = new PIDController(0.0075, 0, 0);
-
-  PS5Controller ps5 = new PS5Controller(0);
+  public PIDController visionPIDController = new PIDController(1, 0, 0);
 
     public Swerve() {
       
@@ -179,20 +175,12 @@ public class Swerve extends SubsystemBase {
   @Override
   public void periodic(){
 
-    LimelightHelpers.setLEDMode_PipelineControl("limelight");
     LimelightHelpers.setLEDMode_ForceOn("limelight");
-
     
     boolean TV = LimelightHelpers.getTV("limelight");
     SmartDashboard.getBoolean("TV", TV);
     double TX = LimelightHelpers.getTX("limelight");
     SmartDashboard.putNumber("TX", TX);
-
-    visionPIDController.setTolerance(0.2);
-    
-    if (ps5.getRawButton(1)){
-      setpoint = 0.0;
-    }
     
     swerveOdometry.update(gyro.getRotation2d(), getModulePositions());
     field.setRobotPose(getPose());
