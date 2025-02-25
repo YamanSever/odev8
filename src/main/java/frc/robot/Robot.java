@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
   public static final CTREConfigs ctreConfigs = new CTREConfigs();
   Joystick stick_0 = new Joystick(0);
-
+  double pidout =0;
 
   double swerveSpeed = 0.8;
   double swerveAngularSpeed = 0.25;
@@ -104,11 +104,16 @@ public class Robot extends TimedRobot {
     double rotationSup = stick_0.getRawAxis(2);
     
     double translationVal = MathUtil.applyDeadband(translationSup * swerveSpeed, Constants.stickDeadband);
-    double strafeVal = MathUtil.applyDeadband(strafeSup * swerveSpeed, Constants.stickDeadband);
+    double strafeVal = MathUtil.applyDeadband(strafeSup + pidout * swerveSpeed, Constants.stickDeadband);
     double rotationVal = MathUtil.applyDeadband(rotationSup * swerveAngularSpeed, Constants.stickDeadband);
 
     RobotContainer.swerve.drive(new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed), rotationVal * Constants.Swerve.maxAngularVelocity, true, true);
 
+    if(stick_0.getRawButton(1)){
+     pidout =  Robotcontainer.swerve.visionpid.calculate(Robotcontainer.swerve.gettx,0);
+    }else{
+      pidout =0;
+    }
   }
 
   @Override
